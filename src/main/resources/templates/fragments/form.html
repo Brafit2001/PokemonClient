@@ -1,0 +1,19 @@
+<form th:fragment="formFragment" th:action="${url}" th:object="${object}" method="post">
+    <div class="mb-3" >
+        <input type="hidden" name="id" class="form-control" id="id"
+               th:value="${pokemon.id}"
+               th:placeholder="${pokemon.id}" readonly>
+
+    </div>
+    <div class="mb-3" >
+        <input name="name" class="form-control" type="text" id="name"
+               th:value="${pokemon.name}"
+               th:placeholder="@{Name: {name}(name=${pokemon.name})}">
+    </div>
+    <div class="mb-3">
+        <input name="pokemonUrl" class="form-control" type="text" id="pokemonUrl"
+               th:value="${pokemon.url}"
+               th:placeholder="@{Pokemon Url: {pokemonUrl}(pokemonUrl=${pokemon.url})}">
+    </div>
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

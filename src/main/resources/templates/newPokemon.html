@@ -1,0 +1,13 @@
+
+<head th:include="fragments/layout :: headerFragment">
+    <title id="pageTitle">Customer List</title>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="content formPokemon">
+            <h3 class="text-center">Add New Pokemon</h3>
+            <form th:replace="fragments/form ::formFragment(url=@{~/new}, object=${pokemon})">
+            </form>
+        </div>
+    </div>
+</body>
