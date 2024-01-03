@@ -5,7 +5,7 @@
     <div class="wrapper">
         <div class="content formPokemon">
             <h3 class="text-center">Edit Pokemon</h3>
-            <form th:replace="fragments/form ::formFragment(url=@{~/edit}, object=${pokemon})">
+            <form th:replace="fragments/form ::formFragment(url=@{~/pokemon/edit}, object=${pokemon})">
             </form>
         </div>
     </div>

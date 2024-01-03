@@ -6,7 +6,7 @@
     <div class="wrapper">
         <div class="content formPokemon">
             <h3 class="text-center">Add New Pokemon</h3>
-            <form th:replace="fragments/form ::formFragment(url=@{~/new}, object=${pokemon})">
+            <form th:replace="fragments/form ::formFragment(url=@{~/pokemon/new}, object=${pokemon})">
             </form>
         </div>
     </div>
