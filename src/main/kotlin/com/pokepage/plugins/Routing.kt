@@ -1,6 +1,5 @@
 package com.pokepage.plugins
 
-import com.pokepage.model.PokeApiResponse
 import com.pokepage.model.Pokemon
 import com.pokepage.model.PostPokemonBody
 import com.pokepage.model.PutPokemonBody
@@ -20,7 +19,6 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.server.thymeleaf.*
 import io.ktor.util.pipeline.*
-import kotlinx.serialization.json.Json
 import java.lang.Double.parseDouble
 
 val client = HttpClient(Apache5) {
@@ -104,51 +102,33 @@ fun Application.configureRouting() {
 private fun home(): suspend PipelineContext<Unit, ApplicationCall>.(Unit) -> Unit =
     {
         val getAllRequest: HttpResponse = client.get(apiUrl)
-        if (getAllRequest.status == HttpStatusCode.NoContent){
-            //If database is empty it dumps all poke api data
-            //Get Full Pokemons from PokeApi list
-            val pokeApiResponse: String = client.get("https://pokeapi.co/api/v2/pokemon?limit=1018&offset=0").body()
-            val convertResponse = Json.decodeFromString<PokeApiResponse>(pokeApiResponse)
-            val pokeApiList: List<PostPokemonBody> = convertResponse.results
-            //Create new Pokemon in database
-            pokeApiList.forEach {
-                client.post(apiUrl) {
-                    contentType(ContentType.Application.Json)
-                    setBody(it)
-                }
+        val keyword = call.request.queryParameters["keyword"]
+        var numeric = true
+        if (keyword == null || keyword == ""){
+            val pokemonList: List<Pokemon> = getAllRequest.body()
+            call.respond(ThymeleafContent("index", mapOf("pokemonList" to pokemonList)))
 
-            }
         }else{
-            val keyword = call.request.queryParameters["keyword"]
-            var numeric = true
-            if (keyword == null || keyword == ""){
-                val pokemonList: List<Pokemon> = getAllRequest.body()
-                call.respond(ThymeleafContent("index", mapOf("pokemonList" to pokemonList)))
-
+            try {
+                parseDouble(keyword)
+            } catch (e: NumberFormatException) {
+                numeric = false
+            }
+            val getUrl: String
+            if (numeric){
+                getUrl = "id"
             }else{
-                try {
-                    parseDouble(keyword)
-                } catch (e: NumberFormatException) {
-                    numeric = false
+                getUrl = "name"
+            }
+            val getRequest: HttpResponse = client.get("$apiUrl/$getUrl/$keyword")
+            when(getRequest.status){
+                HttpStatusCode.NotFound -> call.respondText("Pokemon Not Found")
+                else -> {
+                    val pokemon: Pokemon = getRequest.body()
+                    val pokemonList: List<Pokemon> = listOf(pokemon)
+                    call.respond(ThymeleafContent("index", mapOf("pokemonList" to pokemonList)))
                 }
-                var getUrl = ""
-                if (numeric){
-                    getUrl = "id"
-                }else{
-                    getUrl = "name"
-                }
-                val getRequest: HttpResponse = client.get("$apiUrl/$getUrl/$keyword")
-                when(getRequest.status){
-                    HttpStatusCode.NotFound -> call.respondText("Pokemon Not Found")
-                    else -> {
-                        val pokemon: Pokemon = getRequest.body()
-                        val pokemonList: List<Pokemon> = listOf(pokemon)
-                        call.respond(ThymeleafContent("index", mapOf("pokemonList" to pokemonList)))
-                    }
-                }
-
             }
 
         }
-
     }

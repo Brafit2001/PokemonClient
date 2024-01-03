@@ -75,7 +75,8 @@ body{
     overflow-x: hidden;
     background-color: var(--background-color1);
     box-shadow: 3px 3px 10px rgb(188, 188, 188);
-    border-radius: 30px;
+    border-top-left-radius: 30px;
+    border-bottom-left-radius: 30px;
 }
 
 .wrapper .pT_content{
@@ -113,7 +114,6 @@ body{
 
 /* width */
 ::-webkit-scrollbar {
-    display: none;
     width: 10px;
 }
 
@@ -151,7 +151,6 @@ body{
     border: 0;
     background: #fff;
     display: block;
-    width: 100%;
     padding: 10px 32px 10px 70px;
     font-size: 18px;
     color: #666;
@@ -191,10 +190,8 @@ body{
     border: 0;
     padding: 0;
     cursor: pointer;
-    display: flex;
     -ms-flex-pack: center;
     justify-content: center;
-    align-items: center
 }
 
 .inner-form .input-field .btn-search svg {
